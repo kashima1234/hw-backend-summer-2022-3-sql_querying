@@ -2,11 +2,14 @@
 # Duration - разница между scheduled_arrival и scheduled_departure.
 # В ответе должно быть 2 колонки [flight_no, duration]
 TASK_1_QUERY = """
-SELECT flight_no,
-       (scheduled_arrival - scheduled_departure) AS duration
+SELECT flight_no, 
+       EXTRACT(EPOCH FROM (scheduled_arrival - scheduled_departure)) / 60 AS duration
 FROM flights
 ORDER BY duration ASC
 LIMIT 5;
+"""
+
+
 
 """
 #  flight_no | duration
@@ -21,16 +24,17 @@ LIMIT 5;
 # Вывести топ 3 рейса по числу упоминаний в таблице flights
 # количество упоминаний которых меньше 50
 # В ответе должно быть 2 колонки [flight_no, count]
+
 TASK_2_QUERY = """
-SELECT flight_no,
+SELECT flight_no, 
        COUNT(*) AS count
 FROM flights
 GROUP BY flight_no
 HAVING COUNT(*) < 50
 ORDER BY count DESC
 LIMIT 3;
-
 """
+
 #  flight_no | count
 # -----------+-------
 #  PG0260    |    27
@@ -39,16 +43,14 @@ LIMIT 3;
 
 # Вывести число перелетов внутри одной таймзоны
 # Нужно вывести 1 значение в колонке count
+
+
 TASK_3_QUERY = """
-
 SELECT COUNT(*) AS count
-FROM flights f
-JOIN airports_data dep ON f.departure_airport = dep.airport_code
-JOIN airports_data arr ON f.arrival_airport = arr.airport_code
-WHERE dep.timezone = arr.timezone;
-
-
+FROM flights
+WHERE departure_time_zone = arrival_time_zone;
 """
+
 #  count
 # --------
 #  16824
